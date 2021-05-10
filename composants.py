@@ -153,20 +153,33 @@ class Noble:
 		return f"Point: {self.points} | Coût:" + rou + ver + ble + noi + bla + "."
 
 
+class PileJeton:
+	def __init__(self, couleur, nb_joueur):
+		self.couleur = couleur
+		if self.couleur == "Jaune" or nb_joueur == 3:
+			self.nb_jetons = 5
+		elif nb_joueur == 2:
+			self.nb_jetons = 4
+		elif nb_joueur == 4:
+			self.nb_jetons = 7
+
+
 class Joueur:
 	def __init__(self, name):
 		self.name = name
 		self.cartes = []
 		self.cartes_cache = []
 		self.points = 0
-		self.jeton = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
+		self.jetons = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
 
 	def voir_main(self):
 		if self.cartes:
+			print(f"{self.name} à les cartes suivantes : ")
 			for i in self.cartes:
 				print(i)
 		else:
 			print(f"{self.name} n'a acheté aucune carte")
+		print(f"Il a {self.points} point(s).")
 
 	def pioche3jetons(self):
 		pass
@@ -177,6 +190,7 @@ class Joueur:
 	def achete_carte(self, pioche, numero):
 		print(f"{self.name} a acheté la carte suivante : "
 		      f"{pioche.cartes_visibles[numero - 1]}")
+		self.points += pioche.cartes_visibles[numero - 1].points
 		self.cartes.append(pioche.cartes_visibles.pop(numero - 1))
 		pioche.cartes_visibles.append(pioche.cartes.pop())
 
