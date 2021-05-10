@@ -1,4 +1,4 @@
-from lancement import n3_dispo, pioche_n3
+from random import shuffle
 
 
 class Carte:
@@ -24,6 +24,114 @@ class Carte:
 class Pioche:
 	def __init__(self, niveau):
 		self.niveau = niveau
+		if self.niveau == 1:
+			n1 = [("rouge", 0, 0, 1, 1, 1, 1),
+			      ("rouge", 0, 0, 1, 2, 0, 0),
+			      ("rouge", 0, 1, 0, 0, 3, 1),
+			      ("rouge", 0, 2, 0, 0, 0, 2),
+			      ("rouge", 0, 0, 0, 0, 0, 3),
+			      ("rouge", 0, 0, 1, 0, 2, 2),
+			      ("rouge", 0, 0, 1, 1, 1, 2),
+			      ("rouge", 1, 0, 0, 0, 0, 4),
+			      ("vert", 0, 2, 0, 1, 2, 0),
+			      ("vert", 0, 1, 0, 1, 1, 1),
+			      ("vert", 0, 1, 0, 1, 2, 1),
+			      ("vert", 0, 0, 0, 1, 0, 2),
+			      ("vert", 0, 3, 0, 0, 0, 0),
+			      ("vert", 0, 2, 0, 2, 0, 0),
+			      ("vert", 0, 0, 1, 3, 0, 1),
+			      ("vert", 1, 0, 0, 0, 4, 0),
+			      ("bleu", 0, 0, 0, 0, 2, 1),
+			      ("bleu", 0, 2, 2, 0, 0, 1),
+			      ("bleu", 0, 1, 1, 0, 1, 1),
+			      ("bleu", 0, 2, 1, 0, 1, 1),
+			      ("bleu", 0, 0, 0, 0, 3, 0),
+			      ("bleu", 0, 0, 2, 0, 2, 0),
+			      ("bleu", 0, 1, 3, 1, 0, 1),
+			      ("bleu", 1, 4, 0, 0, 0, 0),
+			      ("noir", 0, 3, 1, 0, 1, 0),
+			      ("noir", 0, 1, 0, 2, 0, 2),
+			      ("noir", 0, 1, 1, 1, 0, 1),
+			      ("noir", 0, 1, 1, 2, 0, 1),
+			      ("noir", 0, 0, 3, 0, 0, 0),
+			      ("noir", 0, 0, 2, 0, 0, 2),
+			      ("noir", 0, 1, 2, 0, 0, 0),
+			      ("noir", 1, 0, 0, 4, 0, 0),
+			      ("blanc", 0, 1, 1, 1, 1, 0),
+			      ("blanc", 0, 0, 0, 2, 2, 0),
+			      ("blanc", 0, 0, 0, 1, 1, 3),
+			      ("blanc", 0, 0, 2, 2, 1, 0),
+			      ("blanc", 0, 2, 0, 0, 1, 0),
+			      ("blanc", 0, 0, 0, 3, 0, 0),
+			      ("blanc", 0, 1, 2, 1, 1, 0),
+			      ("blanc", 1, 0, 4, 0, 0, 0)]
+			shuffle(n1)
+			self.cartes = [Carte(n1[i][0], n1[i][1], n1[i][2], n1[i][3], n1[i][4], n1[i][5], n1[i][6]) for i in
+			               range(20)]
+
+		if self.niveau == 2:
+			n2 = [("rouge", 1, 2, 0, 0, 3, 2),
+			      ("rouge", 1, 2, 0, 3, 3, 0),
+			      ("rouge", 2, 0, 0, 0, 5, 3),
+			      ("rouge", 2, 0, 0, 0, 5, 0),
+			      ("rouge", 2, 0, 2, 4, 0, 1),
+			      ("rouge", 3, 6, 0, 0, 0, 0),
+			      ("vert", 1, 3, 2, 0, 0, 3),
+			      ("vert", 1, 0, 0, 3, 2, 2),
+			      ("vert", 2, 0, 5, 0, 0, 0),
+			      ("vert", 2, 0, 3, 5, 0, 0),
+			      ("vert", 2, 0, 0, 2, 1, 4),
+			      ("vert", 3, 0, 6, 0, 0, 0),
+			      ("bleu", 1, 3, 2, 2, 0, 0),
+			      ("bleu", 1, 0, 3, 2, 3, 0),
+			      ("bleu", 2, 0, 0, 5, 0, 0),
+			      ("bleu", 2, 0, 0, 3, 0, 5),
+			      ("bleu", 2, 1, 0, 0, 4, 2),
+			      ("bleu", 3, 0, 0, 6, 0, 0),
+			      ("noir", 1, 0, 2, 2, 0, 3),
+			      ("noir", 1, 0, 3, 0, 2, 3),
+			      ("noir", 2, 0, 0, 0, 0, 5),
+			      ("noir", 2, 2, 4, 1, 0, 0),
+			      ("noir", 2, 3, 5, 0, 0, 0),
+			      ("noir", 3, 0, 0, 0, 6, 0),
+			      ("blanc", 1, 2, 3, 0, 2, 0),
+			      ("blanc", 1, 2, 0, 3, 0, 2),
+			      ("blanc", 2, 4, 1, 0, 2, 0),
+			      ("blanc", 2, 5, 0, 0, 0, 0),
+			      ("blanc", 2, 5, 0, 0, 3, 0),
+			      ("blanc", 3, 0, 0, 0, 0, 6)]
+			shuffle(n2)
+			self.cartes = [Carte(n2[i][0], n2[i][1], n2[i][2], n2[i][3], n2[i][4], n2[i][5], n2[i][6]) for i in
+			               range(20)]
+
+		if self.niveau == 3:
+			n3 = [("rouge", 3, 0, 3, 5, 3, 3),
+			      ("rouge", 4, 0, 7, 0, 0, 0),
+			      ("rouge", 4, 3, 6, 3, 0, 0),
+			      ("rouge", 5, 3, 7, 0, 0, 0),
+			      ("vert", 3, 3, 0, 3, 3, 5),
+			      ("vert", 4, 0, 0, 7, 0, 0),
+			      ("vert", 4, 0, 3, 6, 0, 3),
+			      ("vert", 5, 0, 3, 7, 0, 0),
+			      ("bleu", 3, 3, 3, 0, 5, 3),
+			      ("bleu", 4, 0, 0, 3, 3, 6),
+			      ("bleu", 4, 0, 0, 0, 0, 7),
+			      ("bleu", 5, 0, 0, 3, 0, 7),
+			      ("noir", 3, 3, 5, 3, 0, 3),
+			      ("noir", 4, 7, 0, 0, 0, 0),
+			      ("noir", 4, 6, 3, 0, 3, 0),
+			      ("noir", 5, 7, 0, 0, 3, 0),
+			      ("blanc", 3, 5, 3, 3, 3, 0),
+			      ("blanc", 4, 0, 0, 0, 7, 0),
+			      ("blanc", 4, 3, 0, 0, 6, 3),
+			      ("blanc", 5, 0, 0, 0, 7, 3)]
+			shuffle(n3)
+			self.cartes = [Carte(n3[i][0], n3[i][1], n3[i][2], n3[i][3], n3[i][4], n3[i][5], n3[i][6]) for i in
+			               range(20)]
+
+		self.cartes_visibles = []
+		for _ in range(4):
+			self.cartes_visibles.append(self.cartes.pop())
 
 
 class Noble:
@@ -66,11 +174,11 @@ class Joueur:
 	def pioche2jetons(self):
 		pass
 
-	def achete_carte(self, niveau, numero):
-		if niveau == 3:
-			self.cartes.append(n3_dispo.pop(numero+1))
-			n3_dispo.append(pioche_n3.pop())
+	def achete_carte(self, pioche, numero):
+		print(f"{self.name} a acheté la carte suivante : "
+		      f"{pioche.cartes_visibles[numero - 1]}")
+		self.cartes.append(pioche.cartes_visibles.pop(numero - 1))
+		pioche.cartes_visibles.append(pioche.cartes.pop())
 
 	def reserve_carte(self):
 		pass
-
