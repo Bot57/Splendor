@@ -6,11 +6,13 @@ pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
 
 def initialisation():
 	global pioche_n1, pioche_n2, pioche_n3
-	global rouge, vert, bleu, noir, blanc, jaune
+	global rouge, vert, bleu, noir, blanc, jaune, jetons
 	nb_joueur = int(input("Quel est le nombre de joueur ?"))
 	init_nobles(nb_joueur)
 	rouge, vert, bleu, noir, blanc, jaune = PileJeton("Rouge", nb_joueur), PileJeton("Vert", nb_joueur), PileJeton(
 		"Bleu", nb_joueur), PileJeton("Noir", nb_joueur), PileJeton("Blanc", nb_joueur), PileJeton("Jaune", nb_joueur),
+	jetons = {"rouge": rouge, "vert": vert, "bleu": bleu, "noir": noir, "blanc": blanc, "jaune": jaune}
+
 	afficher_jeu()
 
 
@@ -63,29 +65,68 @@ def pioche3jetons(joueur):
 		couleur1 = input("Quel jeton voulez vous en premier?\n"
 		                 f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
 		                 f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
-		if couleur1 not in ["rouge", "vert", "bleu", "noir", "blanc"]:
-			print("Votre saisie est incorrect !\n Veuillez indiquez l'une des couleurs suivantes"
-			      f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: {bleu.nb_jetons} / \n"
-			      f"noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+		if couleur1 not in jetons or couleur1 == "jaune":
+			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 			continue
-		joueur.jetons[couleur1] += 1
-		secu += 1
-		if couleur1 == "rouge":
-			rouge.nb_jetons -= 1
-		elif couleur1 == "vert":
-			vert.nb_jetons -= 1
-		elif couleur1 == "bleu":
-			bleu.nb_jetons -= 1
-		elif couleur1 == "noir":
-			noir.nb_jetons -= 1
-		elif couleur1 == "blanc":
-			blanc.nb_jetons -= 1
+		elif jetons[couleur1].nb_jetons == 0:
+			print("Il n'y a plus de jeton de cette couleur disponible\nVeuillez choisir une couleur disponible :")
+			continue
+		else:
+			joueur.jetons[couleur1] += 1
+			jetons[couleur1].nb_jetons -= 1
+			secu += 1
+
+	if sum(joueur.jetons.values()) == 10:
+		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
+		secu += 10
+
+	while secu == 1:
+		couleur2 = input("Quel jeton voulez vous en second?\n"
+		                 f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
+		                 f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+		if couleur2 not in jetons or couleur2 == "jaune":
+			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
+			continue
+		elif jetons[couleur2].nb_jetons == 0:
+			print("Il n'y a plus de jeton de cette couleur disponible\nVeuillez choisir une couleur disponible :")
+			continue
+		else:
+			joueur.jetons[couleur2] += 1
+			jetons[couleur2].nb_jetons -= 1
+			secu += 1
+
+	if sum(joueur.jetons.values()) == 10:
+		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
+		secu += 10
+
+	while secu == 2:
+		couleur3 = input("Quel jeton voulez vous en troisième?\n"
+		                 f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
+		                 f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+		if couleur3 not in jetons or couleur3 == "jaune":
+			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
+			continue
+		elif jetons[couleur3].nb_jetons == 0:
+			print("Il n'y a plus de jeton de cette couleur disponible\nVeuillez choisir une couleur disponible :")
+			continue
+		else:
+			joueur.jetons[couleur3] += 1
+			jetons[couleur3].nb_jetons -= 1
+			secu += 1
+
+	print(f"Vous avez choisi un jeton {couleur1}, {couleur2} et {couleur3}."
+	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
+	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
+
+
+
 
 
 initialisation()
 bot = Joueur("Bot")
-afficher_jeu()
-bot.achete_carte(pioche_n3, 3)
-afficher_jeu(pioche_n1, pioche_n2, pioche_n3)
+pioche3jetons(bot)
+pioche3jetons(bot)
+pioche3jetons(bot)
+pioche3jetons(bot)
 pioche3jetons(bot)
 bot.voir_main()
