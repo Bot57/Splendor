@@ -181,9 +181,6 @@ class Joueur:
 			print(f"{self.name} n'a acheté aucune carte")
 		print(f"Il a {self.points} point(s).")
 
-	def pioche3jetons(self):
-		pass
-
 	def pioche2jetons(self):
 		pass
 
