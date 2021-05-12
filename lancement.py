@@ -5,14 +5,14 @@ pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
 
 
 def initialisation():
-	global pioche_n1, pioche_n2, pioche_n3
+	global pioche_n1, pioche_n2, pioche_n3, pioches
 	global rouge, vert, bleu, noir, blanc, jaune, jetons
 	nb_joueur = int(input("Quel est le nombre de joueur ?"))
 	init_nobles(nb_joueur)
 	rouge, vert, bleu, noir, blanc, jaune = PileJeton("Rouge", nb_joueur), PileJeton("Vert", nb_joueur), PileJeton(
 		"Bleu", nb_joueur), PileJeton("Noir", nb_joueur), PileJeton("Blanc", nb_joueur), PileJeton("Jaune", nb_joueur),
 	jetons = {"rouge": rouge, "vert": vert, "bleu": bleu, "noir": noir, "blanc": blanc, "jaune": jaune}
-
+	pioches = {"1": pioche_n1, "2": pioche_n2, "3": pioche_n3}
 	afficher_jeu()
 
 
@@ -122,8 +122,26 @@ def pioche2jetons(joueur):
 	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
 
 
+def choisir_carte(joueur):
+	pioche = pioches[input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?)")]
+	numero = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?)"))
+	if joueur.jetons["rouge"] >= pioche.cartes_visibles[numero - 1].rouge and \
+		joueur.jetons["vert"] >= pioche.cartes_visibles[numero - 1].vert and \
+		joueur.jetons["bleu"] >= pioche.cartes_visibles[numero - 1].bleu and \
+		joueur.jetons["noir"] >= pioche.cartes_visibles[numero - 1].noir and \
+		joueur.jetons["blanc"] >= pioche.cartes_visibles[numero - 1].blanc:
+		joueur.achete_carte(pioche, numero)
+		# utiliser un marqueur pour dire que l'action est validé
+	# elif comment gérer l'utilisation de jeton jaune?
+	else:
+		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
+		# utiliser le marqueur pour indiquer que l'action n'est pas validé et reproposer les acions possible
+
+
 initialisation()
 bot = Joueur("Bot")
 pioche3jetons(bot)
-pioche2jetons(bot)
+pioche3jetons(bot)
+pioche3jetons(bot)
+choisir_carte(bot)
 bot.voir_main()
