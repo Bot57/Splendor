@@ -59,16 +59,11 @@ def afficher_jeu(p1=pioche_n1, p2=pioche_n2, p3=pioche_n3):
 		print(f"Carte 3.{i + 1} --> {n}")
 
 
-def piocherjeton(joueur, secu, tour, interdit=None):
-	if interdit is None:
-		interdit = []
-	if interdit is None:
-		interdit = []
-	global couleur
-	while secu == 0:
-		couleur = input(f"Quel jeton voulez vous en {tour}?\n"
-		                f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
-		                f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+def piocherjeton(joueur, compteur, tour, interdit=[]):
+	while compteur == 0:
+		couleur: str = input(f"Quel jeton voulez vous en {tour}?\n"
+		                     f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
+		                     f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
 		if couleur not in jetons or couleur == "jaune":
 			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 			continue
@@ -80,27 +75,49 @@ def piocherjeton(joueur, secu, tour, interdit=None):
 		else:
 			joueur.jetons[couleur] += 1
 			jetons[couleur].nb_jetons -= 1
-			secu += 1
+			compteur += 1
 	return couleur
 
 
 def pioche3jetons(joueur):
-	secu = 0
-	couleur1 = piocherjeton(joueur, secu, "premier")
+	compteur = 0
+	couleur1 = piocherjeton(joueur, compteur, "premier")
 
 	if sum(joueur.jetons.values()) == 10:
 		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
-		secu += 10
+		compteur += 10
 
-	couleur2 = piocherjeton(joueur, secu, "second", [couleur1])
+	couleur2 = piocherjeton(joueur, compteur, "second", [couleur1])
 
 	if sum(joueur.jetons.values()) == 10:
 		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
-		secu += 10
+		compteur += 10
 
-	couleur3 = piocherjeton(joueur, secu, "troisième", [couleur1, couleur2])
+	couleur3 = piocherjeton(joueur, compteur, "troisième", [couleur1, couleur2])
 
 	print(f"Vous avez choisi un jeton {couleur1}, {couleur2} et {couleur3}."
+	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
+	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
+
+
+def pioche2jetons(joueur):
+	compteur = 0
+	while compteur == 0:
+		double_couleur: str = input(f"Quel jeton voulez vous en double?\n"
+		                            f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
+		                            f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+		if double_couleur not in jetons or double_couleur == "jaune":
+			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
+			continue
+		elif jetons[double_couleur].nb_jetons < 4:
+			print("Cette action n'est pas possible si il y a moins de 4 jetons de cette couleur disponibles\n"
+			      "Veuillez choisir une couleur disponible :")
+			continue
+		else:
+			joueur.jetons[double_couleur] += 1
+			jetons[double_couleur].nb_jetons -= 1
+			compteur += 1
+	print(f"Vous avez choisi 2 jetons {double_couleur}."
 	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
 	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
 
@@ -108,4 +125,5 @@ def pioche3jetons(joueur):
 initialisation()
 bot = Joueur("Bot")
 pioche3jetons(bot)
+pioche2jetons(bot)
 bot.voir_main()
