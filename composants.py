@@ -1,5 +1,13 @@
 from random import shuffle
 
+"""
+Définitions des classes nécéssaires :
+- Cartes de jeux
+- Nobles
+- Piles de jetons de chaque couleur
+- Joueur
+"""
+
 
 class Carte:
 	def __init__(self, bonus, points, rouge=0, vert=0, bleu=0, noir=0, blanc=0, ):
@@ -173,6 +181,11 @@ class Joueur:
 		self.jetons = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
 
 	def voir_main(self):
+		"""
+		Affiche la main du joueur:
+		- Cartes achetés
+		- Nombre de points gagnés
+		"""
 		if self.cartes:
 			print(f"{self.name} à les cartes suivantes : ")
 			for i in self.cartes:
@@ -182,6 +195,11 @@ class Joueur:
 		print(f"Il a {self.points} point(s).")
 
 	def achete_carte(self, pioche, numero):
+		"""
+		Déplace une carte depuis le jeu à la main du joueur
+		:param pioche: A quelle pioche (niveau 1, 2 ou 3) appartient la carte achetée
+		:param numero: Quelle carte est acheté.
+		"""
 		print(f"{self.name} a acheté la carte suivante : "
 		      f"{pioche.cartes_visibles[numero - 1]}")
 		self.points += pioche.cartes_visibles[numero - 1].points
@@ -189,4 +207,7 @@ class Joueur:
 		pioche.cartes_visibles.append(pioche.cartes.pop())
 
 	def reserve_carte(self):
+		"""
+		Le joueur reserve une carte et pioche un jeton jaune
+		"""
 		pass

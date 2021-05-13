@@ -2,9 +2,16 @@ from composants import *
 
 pile_nobles = []
 pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
+# Je comprend pas pourquoi je ne peux pas inclures ces variables dans initialisation()
 
 
 def initialisation():
+	"""
+	- Définition du nombre de joueur
+	- Mélange et distribution des nobles
+	- Mise en place des jetons
+	- Affichage du jeu en place
+	"""
 	global pioche_n1, pioche_n2, pioche_n3, pioches
 	global rouge, vert, bleu, noir, blanc, jaune, jetons
 	nb_joueur = int(input("Quel est le nombre de joueur ?"))
@@ -17,6 +24,12 @@ def initialisation():
 
 
 def init_nobles(nj):
+	"""
+	- Défini les cartes de nobles
+	- Mélanges les nobles
+	- Distribut les nobles en fonctions du nombre de joueurs
+	:param nj: nombre de joueurs
+	"""
 	nobles = [(3, 0, 0, 0, 4, 4),
 	          (3, 0, 3, 0, 3, 3),
 	          (3, 3, 3, 0, 3, 0),
@@ -35,6 +48,12 @@ def init_nobles(nj):
 
 
 def afficher_jeu(p1=pioche_n1, p2=pioche_n2, p3=pioche_n3):
+	"""
+	Affiche les nobles et les cartes disponibles
+	:param p1: pioche niveau 1
+	:param p2: pioche niveau 2
+	:param p3: pioche niveau 3
+	"""
 	global pioche_n1, pioche_n2, pioche_n3
 	print("Nobles disponibles :")
 	for i, n in enumerate(pile_nobles):
@@ -60,6 +79,14 @@ def afficher_jeu(p1=pioche_n1, p2=pioche_n2, p3=pioche_n3):
 
 
 def piocherjeton(joueur, compteur, tour, interdit=[]):
+	"""
+	Pioche d'un jeton
+	:param joueur: Joueur qui pioche le jeton
+	:param compteur: Permet de vérifier si l'action est fini et/ou autorisé (nombre max. de jetons atteint)
+	:param tour: Indique quel jeton est pioché (première, deuxième ou troisième)
+	:param interdit: Contient les couleurs déjà piochées
+	:return: La couleur du jeton pioché
+	"""
 	while compteur == 0:
 		couleur: str = input(f"Quel jeton voulez vous en {tour}?\n"
 		                     f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
@@ -79,8 +106,12 @@ def piocherjeton(joueur, compteur, tour, interdit=[]):
 	return couleur
 
 
-def pioche3jetons(joueur):
-	compteur = 0
+def pioche3jetons(joueur, compteur=0):
+	"""
+	Pioche de 3 jetons de couleurs différentes
+	:param compteur: Permet de vérifier si l'action est fini et/ou autorisé (nombre max. de jetons atteint)
+	:param joueur: Joueur qui pioche les jetons
+	"""
 	couleur1 = piocherjeton(joueur, compteur, "premier")
 
 	if sum(joueur.jetons.values()) == 10:
@@ -100,8 +131,12 @@ def pioche3jetons(joueur):
 	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
 
 
-def pioche2jetons(joueur):
-	compteur = 0
+def pioche2jetons(joueur, compteur=0):
+	"""
+	Pioche de 2 jetons de même couleurs
+	:param compteur: Permet de vérifier si l'action est fini
+	:param joueur: Joueur qui pioche les jetons
+	"""
 	while compteur == 0:
 		double_couleur: str = input(f"Quel jeton voulez vous en double?\n"
 		                            f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
@@ -123,6 +158,10 @@ def pioche2jetons(joueur):
 
 
 def choisir_carte(joueur):
+	"""
+	Le joueur choisi une carte et l'achète si il le peut
+	:param joueur: Joueur qui pioche les jetons
+	"""
 	pioche = pioches[input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?)")]
 	numero = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?)"))
 	if joueur.jetons["rouge"] >= pioche.cartes_visibles[numero - 1].rouge and \
@@ -136,12 +175,3 @@ def choisir_carte(joueur):
 	else:
 		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
 		# utiliser le marqueur pour indiquer que l'action n'est pas validé et reproposer les acions possible
-
-
-initialisation()
-bot = Joueur("Bot")
-pioche3jetons(bot)
-pioche3jetons(bot)
-pioche3jetons(bot)
-choisir_carte(bot)
-bot.voir_main()
