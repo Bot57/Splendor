@@ -179,6 +179,7 @@ class Joueur:
 		self.cartes_cache = []
 		self.points = 0
 		self.jetons = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
+		self.bonus = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0}
 
 	def voir_main(self):
 		"""
@@ -203,6 +204,7 @@ class Joueur:
 		print(f"{self.name} a acheté la carte suivante : "
 		      f"{pioche.cartes_visibles[numero - 1]}")
 		self.points += pioche.cartes_visibles[numero - 1].points
+		self.bonus[pioche.cartes_visibles[numero - 1].bonus] += 1
 		self.cartes.append(pioche.cartes_visibles.pop(numero - 1))
 		pioche.cartes_visibles.append(pioche.cartes.pop())
 

@@ -1,5 +1,6 @@
 from composants import *
 
+global nb_joueur
 pile_nobles = []
 pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
 # Je comprend pas pourquoi je ne peux pas inclures ces variables dans initialisation()
@@ -78,53 +79,43 @@ def afficher_jeu(p1=pioche_n1, p2=pioche_n2, p3=pioche_n3):
 		print(f"Carte 3.{i + 1} --> {n}")
 
 
-def piocherjeton(joueur, compteur, tour, interdit=[]):
-	"""
-	Pioche d'un jeton
-	:param joueur: Joueur qui pioche le jeton
-	:param compteur: Permet de vérifier si l'action est fini et/ou autorisé (nombre max. de jetons atteint)
-	:param tour: Indique quel jeton est pioché (première, deuxième ou troisième)
-	:param interdit: Contient les couleurs déjà piochées
-	:return: La couleur du jeton pioché
-	"""
-	while compteur == 0:
-		couleur: str = input(f"Quel jeton voulez vous en {tour}?\n"
-		                     f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
-		                     f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
-		if couleur not in jetons or couleur == "jaune":
-			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
-			continue
-		elif jetons[couleur].nb_jetons == 0:
-			print("Il n'y a plus de jeton de cette couleur disponible\nVeuillez choisir une couleur disponible :")
-			continue
-		elif couleur in interdit:
-			print(f"Vous avez déjà piocher un jeton {couleur}, vous ne pouvez pas en piocher un deuxième identique !")
-		else:
-			joueur.jetons[couleur] += 1
-			jetons[couleur].nb_jetons -= 1
-			compteur += 1
-	return couleur
-
-
-def pioche3jetons(joueur, compteur=0):
+def pioche3jetons(joueur):
 	"""
 	Pioche de 3 jetons de couleurs différentes
-	:param compteur: Permet de vérifier si l'action est fini et/ou autorisé (nombre max. de jetons atteint)
 	:param joueur: Joueur qui pioche les jetons
 	"""
-	couleur1 = piocherjeton(joueur, compteur, "premier")
 
-	if sum(joueur.jetons.values()) == 10:
-		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
-		compteur += 10
+	def piocherjeton(joueurbis, tour, interdit=[], compteur=0):
+		"""
+		Pioche d'un jeton
+		:param joueurbis: Joueur qui pioche le jeton
+		:param compteur: Permet de vérifier si l'action est finie
+		:param tour: Indique quel jeton est pioché (première, deuxième ou troisième)
+		:param interdit: Contient les couleurs déjà piochées
+		:return: La couleur du jeton pioché
+		"""
+		while compteur == 0:
+			couleur: str = input(f"Quel jeton voulez vous en {tour}?\n"
+			                     f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
+			                     f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
+			if couleur not in jetons or couleur == "jaune":
+				print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
+				continue
+			elif jetons[couleur].nb_jetons == 0:
+				print("Il n'y a plus de jeton de cette couleur disponible\nVeuillez choisir une couleur disponible :")
+				continue
+			elif couleur in interdit:
+				print(
+					f"Vous avez déjà piocher un jeton {couleur}, vous ne pouvez pas en piocher un deuxième identique !")
+			else:
+				joueurbis.jetons[couleur] += 1
+				jetons[couleur].nb_jetons -= 1
+				compteur += 1
+		return couleur
 
-	couleur2 = piocherjeton(joueur, compteur, "second", [couleur1])
-
-	if sum(joueur.jetons.values()) == 10:
-		print("Vous avez 10 jetons en mains, vous ne pouvez plus en prendre d'autres.")
-		compteur += 10
-
-	couleur3 = piocherjeton(joueur, compteur, "troisième", [couleur1, couleur2])
+	couleur1 = piocherjeton(joueur, "premier")
+	couleur2 = piocherjeton(joueur, "second", [couleur1])
+	couleur3 = piocherjeton(joueur, "troisième", [couleur1, couleur2])
 
 	print(f"Vous avez choisi un jeton {couleur1}, {couleur2} et {couleur3}."
 	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
@@ -164,14 +155,25 @@ def choisir_carte(joueur):
 	"""
 	pioche = pioches[input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?)")]
 	numero = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?)"))
-	if joueur.jetons["rouge"] >= pioche.cartes_visibles[numero - 1].rouge and \
-		joueur.jetons["vert"] >= pioche.cartes_visibles[numero - 1].vert and \
-		joueur.jetons["bleu"] >= pioche.cartes_visibles[numero - 1].bleu and \
-		joueur.jetons["noir"] >= pioche.cartes_visibles[numero - 1].noir and \
-		joueur.jetons["blanc"] >= pioche.cartes_visibles[numero - 1].blanc:
+	if (joueur.jetons["rouge"] + joueur.bonus["rouge"]) >= pioche.cartes_visibles[numero - 1].rouge and \
+		(joueur.jetons["vert"] + joueur.bonus["vert"]) >= pioche.cartes_visibles[numero - 1].vert and \
+		(joueur.jetons["bleu"] + joueur.bonus["bleu"]) >= pioche.cartes_visibles[numero - 1].bleu and \
+		(joueur.jetons["noir"] + joueur.bonus["noir"]) >= pioche.cartes_visibles[numero - 1].noir and \
+		(joueur.jetons["blanc"] + joueur.bonus["blanc"]) >= pioche.cartes_visibles[numero - 1].blanc:
 		joueur.achete_carte(pioche, numero)
 		# utiliser un marqueur pour dire que l'action est validé
 	# elif comment gérer l'utilisation de jeton jaune?
 	else:
 		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
 		# utiliser le marqueur pour indiquer que l'action n'est pas validé et reproposer les acions possible
+
+
+def afficher_main(joueur):
+	"""
+	Affiche la main du joueur:
+	- Cartes achetés
+	- Nombre de points gagnés
+	"""
+	joueur.voir_main()
+
+
