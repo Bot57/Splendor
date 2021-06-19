@@ -3,6 +3,8 @@ from composants import *
 global nb_joueur
 pile_nobles = []
 pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
+
+
 # Je comprend pas pourquoi je ne peux pas inclures ces variables dans initialisation()
 
 
@@ -78,6 +80,8 @@ def afficher_jeu(p1=pioche_n1, p2=pioche_n2, p3=pioche_n3):
 	for i, n in enumerate(p1.cartes_visibles):
 		print(f"Carte 3.{i + 1} --> {n}")
 
+	return False
+
 
 def pioche3jetons(joueur):
 	"""
@@ -146,26 +150,53 @@ def pioche2jetons(joueur, compteur=0):
 	print(f"Vous avez choisi 2 jetons {double_couleur}."
 	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
 	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
+	return True
 
 
 def choisir_carte(joueur):
 	"""
 	Le joueur choisi une carte et l'achète si il le peut
 	:param joueur: Joueur qui pioche les jetons
+	:return: True si action terminé, False si action non aboutie
 	"""
+	global utiliseJaune, couleurChoisi
+
+	def check_jetons(joueurbis, carte):
+		"""
+		On check si le joueur a les jetons pour acheter la carte selectionné
+		:param carte:
+		:param joueurbis:
+		:return: True si le joueur a assez de jeton, sinon False
+		"""
+		return (joueurbis.jetons["rouge"] + joueurbis.bonus["rouge"]) >= carte.rouge and \
+		       (joueurbis.jetons["vert"] + joueurbis.bonus["vert"]) >= carte.vert and \
+		       (joueurbis.jetons["bleu"] + joueurbis.bonus["bleu"]) >= carte.bleu and \
+		       (joueurbis.jetons["noir"] + joueurbis.bonus["noir"]) >= carte.noir and \
+		       (joueurbis.jetons["blanc"] + joueurbis.bonus["blanc"]) >= carte.blanc
+
 	pioche = pioches[input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?)")]
 	numero = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?)"))
-	if (joueur.jetons["rouge"] + joueur.bonus["rouge"]) >= pioche.cartes_visibles[numero - 1].rouge and \
-		(joueur.jetons["vert"] + joueur.bonus["vert"]) >= pioche.cartes_visibles[numero - 1].vert and \
-		(joueur.jetons["bleu"] + joueur.bonus["bleu"]) >= pioche.cartes_visibles[numero - 1].bleu and \
-		(joueur.jetons["noir"] + joueur.bonus["noir"]) >= pioche.cartes_visibles[numero - 1].noir and \
-		(joueur.jetons["blanc"] + joueur.bonus["blanc"]) >= pioche.cartes_visibles[numero - 1].blanc:
+	carteChoisie = pioche.cartes_visibles[numero - 1]
+	if joueur.jetons["jaune"] > 0:
+		utiliseJaune = input("Voulez vous utiliser un jeton jaune ? (O/N)")
+		if utiliseJaune == "O":
+			couleurChoisi = input("Quelle est la couleur que vous voulez que votre jeton jaune représente ? \n"
+			                      "rouge, vert, bleu, noir ou blanc ?")
+			print(f"Vous avez choisi la couleur {couleurChoisi}")
+			joueur.jetons[couleurChoisi] += 1
+	else:
+		utiliseJaune = "N"
+
+	if check_jetons(joueur, carteChoisie):
 		joueur.achete_carte(pioche, numero)
-		# utiliser un marqueur pour dire que l'action est validé
-	# elif comment gérer l'utilisation de jeton jaune?
+		if utiliseJaune == "O":
+			joueur.jetons["jaune"] -= 1
+		return True  # utilisé pour dire que l'action est validé
 	else:
 		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
-		# utiliser le marqueur pour indiquer que l'action n'est pas validé et reproposer les acions possible
+		if utiliseJaune == "O":
+			joueur.jetons[couleurChoisi] -= 1
+		return False  # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
 
 
 def afficher_main(joueur):
@@ -175,5 +206,4 @@ def afficher_main(joueur):
 	- Nombre de points gagnés
 	"""
 	joueur.voir_main()
-
-
+	return False

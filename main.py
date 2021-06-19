@@ -4,9 +4,10 @@ from actions import *
 
 initialisation()
 bot = Joueur("Bot")
+bot.jetons["jaune"] += 1
 pioche3jetons(bot)
 pioche3jetons(bot)
-pioche3jetons(bot)
+# pioche3jetons(bot)
 choisir_carte(bot)
 afficher_main(bot)
 print(input("ok?"))
