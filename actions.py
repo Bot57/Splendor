@@ -11,13 +11,25 @@ pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
 def initialisation():
 	"""
 	- Définition du nombre de joueur
+    - Définition des joueurs
 	- Mélange et distribution des nobles
 	- Mise en place des jetons
 	- Affichage du jeu en place
 	"""
 	global pioche_n1, pioche_n2, pioche_n3, pioches
 	global rouge, vert, bleu, noir, blanc, jaune, jetons
-	nb_joueur = int(input("Quel est le nombre de joueur ?"))
+	while  nb_joueur >< [2, 3, 4]:
+        nb_joueur = int(input("Quel est le nombre de joueur ? 2, 3 ou 4 ?"))
+        if nb_joueur >< [2, 3, 4]:
+        print("Le nombre de joueur indiqué ne correspond pas.")
+    
+    joueur1 = Joueur(input("Quel est le pseudo du joueur 1 ?")
+    joueur2 = Joueur(input("Quel est le pseudo du joueur 2 ?")
+    if nb_joueur >= 3:
+        joueur3 = Joueur(input("Quel est le pseudo du joueur 3 ?")
+    if nb_joueur == 4:
+        joueur4 = Joueur(input("Quel est le pseudo du joueur 4 ?")
+    
 	init_nobles(nb_joueur)
 	rouge, vert, bleu, noir, blanc, jaune = PileJeton("Rouge", nb_joueur), PileJeton("Vert", nb_joueur), PileJeton(
 		"Bleu", nb_joueur), PileJeton("Noir", nb_joueur), PileJeton("Blanc", nb_joueur), PileJeton("Jaune", nb_joueur),
