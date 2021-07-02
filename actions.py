@@ -1,8 +1,8 @@
 from composants import *
 
-global nb_joueur
 pile_nobles = []
 pioche_n1, pioche_n2, pioche_n3 = Pioche(1), Pioche(2), Pioche(3)
+global joueurs = []
 
 
 # Je comprend pas pourquoi je ne peux pas inclures ces variables dans initialisation()
@@ -24,11 +24,15 @@ def initialisation():
         print("Le nombre de joueur indiqué ne correspond pas.")
     
     joueur1 = Joueur(input("Quel est le pseudo du joueur 1 ?")
+    joueurs.extend(joueur1)
     joueur2 = Joueur(input("Quel est le pseudo du joueur 2 ?")
+    joueurs.extend(joueur2)
     if nb_joueur >= 3:
         joueur3 = Joueur(input("Quel est le pseudo du joueur 3 ?")
+        joueurs.extend(joueur3)
     if nb_joueur == 4:
         joueur4 = Joueur(input("Quel est le pseudo du joueur 4 ?")
+        joueurs.extend(joueur4)
     
 	init_nobles(nb_joueur)
 	rouge, vert, bleu, noir, blanc, jaune = PileJeton("Rouge", nb_joueur), PileJeton("Vert", nb_joueur), PileJeton(
@@ -111,10 +115,16 @@ def pioche3jetons(joueur):
 		:return: La couleur du jeton pioché
 		"""
 		while compteur == 0:
-			couleur: str = input(f"Quel jeton voulez vous en {tour}?\n"
-			                     f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
-			                     f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
-			if couleur not in jetons or couleur == "jaune":
+			couleur: str = input(f"""Quel jeton voulez vous en {tour}? (indiquez "annuler" pour annuler)
+			Jeton disponibles:
+            - rouge: {rouge.nb_jetons}
+            - vert: {vert.nb_jetons} 
+            - bleu: {bleu.nb_jetons}
+            - noir: {noir.nb_jetons}
+            - blanc: {blanc.nb_jetons}"""
+            if double_couleur == "annuler":
+                return False # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
+			elif couleur not in jetons or couleur == "jaune":
 				print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 				continue
 			elif jetons[couleur].nb_jetons == 0:
@@ -130,25 +140,40 @@ def pioche3jetons(joueur):
 		return couleur
 
 	couleur1 = piocherjeton(joueur, "premier")
+    if couleur1 == False:
+        return False
 	couleur2 = piocherjeton(joueur, "second", [couleur1])
+    if couleur2 == False:
+        return False
 	couleur3 = piocherjeton(joueur, "troisième", [couleur1, couleur2])
+    if couleur3 == False:
+        return False
 
 	print(f"Vous avez choisi un jeton {couleur1}, {couleur2} et {couleur3}."
 	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
 	      f"{joueur.jetons['bleu']} bleu(s), {joueur.jetons['noir']} noir(s) et {joueur.jetons['blanc']} blanc(s)")
-
+    return True
+    
 
 def pioche2jetons(joueur, compteur=0):
 	"""
 	Pioche de 2 jetons de même couleurs
 	:param compteur: Permet de vérifier si l'action est fini
 	:param joueur: Joueur qui pioche les jetons
+    :return: True si action terminé, False si action non aboutie
 	"""
 	while compteur == 0:
-		double_couleur: str = input(f"Quel jeton voulez vous en double?\n"
-		                            f"Jeton disponibles --> rouge: {rouge.nb_jetons} / vert: {vert.nb_jetons} / bleu: "
-		                            f"{bleu.nb_jetons} / noir: {noir.nb_jetons} / blanc: {blanc.nb_jetons}")
-		if double_couleur not in jetons or double_couleur == "jaune":
+		double_couleur: str = input(f"""Quel jeton voulez vous en double? (indiquez "annuler" pour annuler)
+		Jeton disponibles:
+        - rouge: {rouge.nb_jetons}
+        - vert: {vert.nb_jetons} 
+        - bleu: {bleu.nb_jetons}
+        - noir: {noir.nb_jetons}
+        - blanc: {blanc.nb_jetons}""")
+        
+		if double_couleur == "annuler":
+            return False # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
+        elif double_couleur not in jetons or double_couleur == "jaune":
 			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 			continue
 		elif jetons[double_couleur].nb_jetons < 4:

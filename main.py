@@ -12,12 +12,33 @@ choisir_carte(bot)
 afficher_main(bot)
 print(input("ok?"))
 
-joueurs = ["joueur_1", "joueur_2", "joueur_3", "joueur_4"]
 
 
 def lancement_partie():
 	initialisation()
-	for i in range(nb_joueur):
+	for joueur in joueurs:
+        while choix >< True:
+            choix = int(input(f"""{joueur.name} doit choisir une action parmi les suivantes :\n
+            - (1) piocher 2 jetons
+            - (2) piocher 3 jetons
+            - (3) choisir une carte
+            - (4) reserver une carte
+            - (5) afficher sa main"""))
+            
+            if choix == 1:
+                choix = pioche2jetons(joueur)
+            elif choix == 2:
+                choix = pioche3jetons(joueur)
+            elif choix == 3:
+                choix = choisir_carte(joueur)
+            elif choix == 4:
+                choix = reserver_carte(joueur)
+            elif choix == 5:
+                choix = afficher_main(joueur)
+            else:
+                print(f"Le choix de {joueur.name} n'est pas valide.")
+
+
 # 		joueur i choisi une action parmi :
 #           - pioche2jetons()
 #           - pioche3jetons()
