@@ -124,7 +124,7 @@ def pioche3jetons(joueur):
             - blanc: {blanc.nb_jetons}"""
             if double_couleur == "annuler":
                 return False # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
-			elif couleur not in jetons or couleur == "jaune":
+			elif couleur not in jetons:
 				print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 				continue
 			elif jetons[couleur].nb_jetons == 0:
@@ -173,7 +173,7 @@ def pioche2jetons(joueur, compteur=0):
         
 		if double_couleur == "annuler":
             return False # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
-        elif double_couleur not in jetons or double_couleur == "jaune":
+        elif double_couleur not in jetons:
 			print("Votre saisie est incorrect !\nVeuillez indiquez l'une des couleurs suivantes:")
 			continue
 		elif jetons[double_couleur].nb_jetons < 4:
@@ -181,8 +181,8 @@ def pioche2jetons(joueur, compteur=0):
 			      "Veuillez choisir une couleur disponible :")
 			continue
 		else:
-			joueur.jetons[double_couleur] += 1
-			jetons[double_couleur].nb_jetons -= 1
+			joueur.jetons[double_couleur] += 2
+			jetons[double_couleur].nb_jetons -= 2
 			compteur += 1
 	print(f"Vous avez choisi 2 jetons {double_couleur}."
 	      f"Vous avez maintenant {joueur.jetons['rouge']} rouge(s), {joueur.jetons['vert']} vert(s), "
@@ -198,7 +198,7 @@ def choisir_carte(joueur):
 	"""
 	global utiliseJaune, couleurChoisi
 
-	def check_jetons(joueurbis, carte):
+	def check_jetons(joueurbis, carte, check = 0):
 		"""
 		On check si le joueur a les jetons pour acheter la carte selectionné
 		:param carte:
@@ -217,12 +217,18 @@ def choisir_carte(joueur):
 	if joueur.jetons["jaune"] > 0:
 		utiliseJaune = input("Voulez vous utiliser un jeton jaune ? (O/N)")
 		if utiliseJaune == "O":
-			couleurChoisi = input("Quelle est la couleur que vous voulez que votre jeton jaune représente ? \n"
-			                      "rouge, vert, bleu, noir ou blanc ?")
-			print(f"Vous avez choisi la couleur {couleurChoisi}")
-			joueur.jetons[couleurChoisi] += 1
-	else:
-		utiliseJaune = "N"
+			while check 0 :
+                couleurChoisi = input("Quelle est la couleur que vous voulez que votre jeton jaune représente ? \n"
+                                    "rouge, vert, bleu, noir ou blanc ?")
+                if couleurChoisi not in jetons:
+                    print("Votre saisie est incorrect !")
+                    continue
+                else : 
+                    print(f"Vous avez choisi la couleur {couleurChoisi}")
+                    joueur.jetons[couleurChoisi] += 1
+                    check = 1
+    else:
+        utiliseJaune = "N"
 
 	if check_jetons(joueur, carteChoisie):
 		joueur.achete_carte(pioche, numero)

@@ -23,7 +23,8 @@ def lancement_partie():
             - (2) piocher 3 jetons
             - (3) choisir une carte
             - (4) reserver une carte
-            - (5) afficher sa main"""))
+            - (5) afficher sa main
+            - (6) afficher le jeu"""))
             
             if choix == 1:
                 choix = pioche2jetons(joueur)
@@ -35,6 +36,8 @@ def lancement_partie():
                 choix = reserver_carte(joueur)
             elif choix == 5:
                 choix = afficher_main(joueur)
+            elif choix == 6:
+                choix = afficher_jeu
             else:
                 print(f"Le choix de {joueur.name} n'est pas valide.")
 
