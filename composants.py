@@ -75,7 +75,7 @@ class Pioche:
 			      ("blanc", 1, 0, 4, 0, 0, 0)]
 			shuffle(n1)
 			self.cartes = [Carte(n1[i][0], n1[i][1], n1[i][2], n1[i][3], n1[i][4], n1[i][5], n1[i][6]) for i in
-			               range(20)]
+			               range(39)]
 
 		if self.niveau == 2:
 			n2 = [("rouge", 1, 2, 0, 0, 3, 2),
@@ -110,7 +110,7 @@ class Pioche:
 			      ("blanc", 3, 0, 0, 0, 0, 6)]
 			shuffle(n2)
 			self.cartes = [Carte(n2[i][0], n2[i][1], n2[i][2], n2[i][3], n2[i][4], n2[i][5], n2[i][6]) for i in
-			               range(20)]
+			               range(29)]
 
 		if self.niveau == 3:
 			n3 = [("rouge", 3, 0, 3, 5, 3, 3),
@@ -135,7 +135,7 @@ class Pioche:
 			      ("blanc", 5, 0, 0, 0, 7, 3)]
 			shuffle(n3)
 			self.cartes = [Carte(n3[i][0], n3[i][1], n3[i][2], n3[i][3], n3[i][4], n3[i][5], n3[i][6]) for i in
-			               range(20)]
+			               range(19)]
 
 		self.cartes_visibles = []
 		for _ in range(4):
@@ -161,6 +161,25 @@ class Noble:
 		return f"Point: {self.points} | Coût:" + rou + ver + ble + noi + bla + "."
 
 
+class Nobles:
+	def __init__(self, nj):
+		nobles = [(3, 0, 0, 0, 4, 4),
+		          (3, 0, 3, 0, 3, 3),
+		          (3, 3, 3, 0, 3, 0),
+		          (3, 0, 3, 3, 0, 3),
+		          (3, 0, 0, 3, 3, 3),
+		          (3, 4, 4, 0, 0, 0),
+		          (3, 0, 0, 4, 0, 4),
+		          (3, 4, 0, 0, 4, 0),
+		          (3, 0, 4, 4, 0, 0),
+		          (3, 3, 3, 3, 0, 0)]
+		shuffle(nobles)
+		self.nobles_dispo = []
+		for i in range(nj + 1):
+			self.nobles_dispo.append(
+				Noble(nobles[i][0], nobles[i][1], nobles[i][2], nobles[i][3], nobles[i][4], nobles[i][5]))
+
+
 class PileJeton:
 	def __init__(self, couleur, nb_joueur):
 		self.couleur = couleur
@@ -181,6 +200,9 @@ class Joueur:
 		self.jetons = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
 		self.bonus = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0}
 
+	def __repr__(self):
+		return self.name
+
 	def voir_main(self):
 		"""
 		Affiche la main du joueur:
@@ -195,21 +217,32 @@ class Joueur:
 			print(f"{self.name} n'a acheté aucune carte")
 		print(f"Il a {self.points} point(s).")
 
-	def achete_carte(self, pioche, numero):
+	def achete_carte(self, partie, pioche, numero):
 		"""
 		Déplace une carte depuis le jeu à la main du joueur
+		:param partie: La partie en cours
 		:param pioche: A quelle pioche (niveau 1, 2 ou 3) appartient la carte achetée
 		:param numero: Quelle carte est acheté.
 		"""
+		carte = partie.pioches[pioche].cartes_visibles[numero]
 		print(f"{self.name} a acheté la carte suivante : "
-		      f"{pioche.cartes_visibles[numero - 1]}")
-		self.points += pioche.cartes_visibles[numero - 1].points
-		self.bonus[pioche.cartes_visibles[numero - 1].bonus] += 1
-		self.cartes.append(pioche.cartes_visibles.pop(numero - 1))
-		pioche.cartes_visibles.append(pioche.cartes.pop())
+		      f"{carte}")
+		self.points += carte.points
+		self.bonus[carte.bonus] += 1
+		self.cartes.append(partie.pioches[pioche].cartes_visibles.pop(numero))
+		partie.pioches[pioche].cartes_visibles.append(partie.pioches[pioche].cartes.pop())
 
 	def reserve_carte(self):
 		"""
 		Le joueur reserve une carte et pioche un jeton jaune
 		"""
 		pass
+
+
+class Partie:
+	def __init__(self, nj):
+		self.joueurs = []
+		self.pioches = [Pioche(1), Pioche(2), Pioche(3)]
+		nobles = Nobles(nj)
+		self.nobles_visibles = nobles.nobles_dispo
+		self.jetons = {}
