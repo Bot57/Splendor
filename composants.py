@@ -206,12 +206,19 @@ class Joueur:
 	def voir_main(self):
 		"""
 		Affiche la main du joueur:
-		- Cartes achetés
+		- Cartes achetées
+        - Cartes reservées
 		- Nombre de points gagnés
 		"""
 		if self.cartes:
 			print(f"{self.name} à les cartes suivantes : ")
 			for i in self.cartes:
+				print(i)
+		else:
+			print(f"{self.name} n'a acheté aucune carte")
+        if self.cartes_cache:
+			print(f"{self.name} reserve les cartes suivantes : ")
+			for i in self.cartes_cache:
 				print(i)
 		else:
 			print(f"{self.name} n'a acheté aucune carte")
@@ -222,7 +229,7 @@ class Joueur:
 		Déplace une carte depuis le jeu à la main du joueur
 		:param partie: La partie en cours
 		:param pioche: A quelle pioche (niveau 1, 2 ou 3) appartient la carte achetée
-		:param numero: Quelle carte est acheté.
+		:param numero: Quelle carte est achetée.
 		"""
 		carte = partie.pioches[pioche].cartes_visibles[numero]
 		print(f"{self.name} a acheté la carte suivante : "
@@ -231,12 +238,23 @@ class Joueur:
 		self.bonus[carte.bonus] += 1
 		self.cartes.append(partie.pioches[pioche].cartes_visibles.pop(numero))
 		partie.pioches[pioche].cartes_visibles.append(partie.pioches[pioche].cartes.pop())
+        return True
 
-	def reserve_carte(self):
+	def reserve_carte(self, partie, pioche, numero):
 		"""
 		Le joueur reserve une carte et pioche un jeton jaune
+        :param partie: La partie en cours
+		:param pioche: A quelle pioche (niveau 1, 2 ou 3) appartient la carte reservée
+		:param numero: Quelle carte est reservée.
 		"""
-		pass
+        carte = partie.pioches[pioche].cartes_visibles[numero]
+		print(f"{self.name} a reservé la carte suivante : "
+		      f"{carte}")
+		self.cartes_cache.append(partie.pioches[pioche].cartes_visibles.pop(numero))
+		partie.pioches[pioche].cartes_visibles.append(partie.pioches[pioche].cartes.pop())
+        self.jetons["jaune"] += 1
+        partie.jetons["jaune"].nb_jetons -= 1
+        return True
 
 
 class Partie:

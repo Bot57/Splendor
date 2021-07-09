@@ -181,7 +181,7 @@ def pioche3jetons(partie, joueur):
 	return True
 
 
-def choisir_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
+def acheter_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
 	"""
 	Le joueur choisi une carte et l'achète si il le peut
 	:param couleurChoisi: Couleur de jeton choisie en échange d'un jeton jaune
@@ -204,10 +204,14 @@ def choisir_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
 		       (gamer.jetons["noir"] + gamer.bonus["noir"]) >= carte.noir and \
 		       (gamer.jetons["blanc"] + gamer.bonus["blanc"]) >= carte.blanc
 
-	pioche: int = int(input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?) (\"annuler\" pour annuler "
+	pioche: int = int(input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?) (\"0\" pour annuler "
 	                        "l'action)")) - 1
-	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?) (\"annuler\" pour "
+    if pioche == 0:
+        return False
+	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?) (\"0\" pour "
 	                        "annuler l'action)")) - 1
+    if numero == 0:
+        return False
 	carteChoisie = partie.pioches[pioche].cartes_visibles[numero]
 
 	jaune_utilise = 0
@@ -236,8 +240,7 @@ def choisir_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
 			break
 
 	if check_jetons(carteChoisie):
-		gamer.achete_carte(partie, pioche, numero)
-		return True  # utilisé pour dire que l'action est validé
+		return gamer.achete_carte(partie, pioche, numero)   # utilisé pour dire que l'action est validé
 	else:
 		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
 		if utiliseJaune == "o":
@@ -259,6 +262,19 @@ def afficher_main(partie, joueur):
 	return False
 
 
+def reserver_carte(partie, joueur):
+    gamer = partie.joueurs[joueur]
+	pioche: int = int(input("De quel niveau est la carte que vous souhaitez réserver ? (1, 2 ou 3?) (\"0\" pour annuler "
+	                        "l'action)")) - 1
+    if pioche == 0:
+        return False
+	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez réserver ? (1, 2, 3 ou 4?) (\"0\" pour "
+	                        "annuler l'action)")) - 1
+    if numero == 0:
+        return False
+	return gamer.reserve_carte(partie, pioche, numero)
+    
+    
 # def init_nobles(nj):
 # 	"""
 # 	- Défini les cartes de nobles

@@ -30,15 +30,16 @@ def lancement_partie():
 	# 		- (2) piocher 3 jetons
 	# 		- (3) choisir une carte
 	# 		- (4) reserver une carte
-	# 		- (5) afficher sa main
-	# 		- (6) afficher le jeu"""))
+    #       - (5) jouer une carte réservée
+	# 		- (6) afficher sa main
+	# 		- (7) afficher le jeu"""))
 	#
 	# 		if choix == 1:
 	# 			choix = pioche2jetons(joueur)
 	# 		elif choix == 2:
 	# 			choix = pioche3jetons(joueur)
 	# 		elif choix == 3:
-	# 			choix = choisir_carte(joueur)
+	# 			choix = acheter_carte(joueur)
 	# 		elif choix == 4:
 	# 			choix = reserver_carte(joueur)
 	# 		elif choix == 5:
