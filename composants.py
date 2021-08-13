@@ -199,6 +199,7 @@ class Joueur:
 		self.points = 0
 		self.jetons = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0, "jaune": 0}
 		self.bonus = {"rouge": 0, "vert": 0, "bleu": 0, "noir": 0, "blanc": 0}
+		self.nobles = []
 
 	def __repr__(self):
 		return self.name
@@ -207,22 +208,31 @@ class Joueur:
 		"""
 		Affiche la main du joueur:
 		- Cartes achetées
-        - Cartes reservées
+		- Cartes reservées
 		- Nombre de points gagnés
 		"""
+		print("------------------------------------------------")
 		if self.cartes:
 			print(f"{self.name} à les cartes suivantes : ")
 			for i in self.cartes:
 				print(i)
 		else:
 			print(f"{self.name} n'a acheté aucune carte")
-        if self.cartes_cache:
+		if self.cartes_cache:
 			print(f"{self.name} reserve les cartes suivantes : ")
 			for i in self.cartes_cache:
 				print(i)
 		else:
-			print(f"{self.name} n'a acheté aucune carte")
+			print(f"{self.name} n'a réservé aucune carte")
+		print(f"""{self.name} a:
+- {self.jetons['rouge']} jetons rouge
+- {self.jetons['vert']} jetons vert
+- {self.jetons['bleu']} jetons bleu
+- {self.jetons['noir']} jetons noir
+- {self.jetons['blanc']} jetons blanc
+- {self.jetons['jaune']} jetons jaune""")
 		print(f"Il a {self.points} point(s).")
+		print("------------------------------------------------")
 
 	def achete_carte(self, partie, pioche, numero):
 		"""
@@ -238,23 +248,37 @@ class Joueur:
 		self.bonus[carte.bonus] += 1
 		self.cartes.append(partie.pioches[pioche].cartes_visibles.pop(numero))
 		partie.pioches[pioche].cartes_visibles.append(partie.pioches[pioche].cartes.pop())
-        return True
+		return True
 
 	def reserve_carte(self, partie, pioche, numero):
 		"""
 		Le joueur reserve une carte et pioche un jeton jaune
-        :param partie: La partie en cours
+		:param partie: La partie en cours
 		:param pioche: A quelle pioche (niveau 1, 2 ou 3) appartient la carte reservée
 		:param numero: Quelle carte est reservée.
 		"""
-        carte = partie.pioches[pioche].cartes_visibles[numero]
+		carte = partie.pioches[pioche].cartes_visibles[numero]
 		print(f"{self.name} a reservé la carte suivante : "
 		      f"{carte}")
 		self.cartes_cache.append(partie.pioches[pioche].cartes_visibles.pop(numero))
 		partie.pioches[pioche].cartes_visibles.append(partie.pioches[pioche].cartes.pop())
-        self.jetons["jaune"] += 1
-        partie.jetons["jaune"].nb_jetons -= 1
-        return True
+		if partie.jetons["jaune"].nb_jetons > 0:
+			self.jetons["jaune"] += 1
+			partie.jetons["jaune"].nb_jetons -= 1
+		return True
+
+	def utilise_carte(self, choix):
+		carte = self.cartes_cache[choix]
+		print(f"{self.name} a utilisé la carte suivante : "
+		      f"{carte}")
+		self.points += carte.points
+		self.bonus[carte.bonus] += 1
+		self.cartes.append(self.cartes_cache.pop(choix))
+		return True
+
+	def gagne_noble(self, partie, noble):
+		self.nobles.append(partie.nobles_visibles.pop(noble))
+		self.points += noble.points
 
 
 class Partie:

@@ -71,6 +71,8 @@ def afficher_jeu(partie):
 	for cle, valeur in partie.jetons.items():
 		print(f"Il y a {valeur.nb_jetons} jetons {cle}")
 
+	print("------------------------------------------------")
+
 	return False
 
 
@@ -181,42 +183,126 @@ def pioche3jetons(partie, joueur):
 	return True
 
 
-def acheter_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
+def acheter_carte(partie, joueur, jetonsRecues=None):
 	"""
 	Le joueur choisi une carte et l'achète si il le peut
-	:param couleurChoisi: Couleur de jeton choisie en échange d'un jeton jaune
-	:param utiliseJaune: Indicateur pour savoir si le joueur à réaliser un échange de jeton jaune
+	:param jetonsRecues: Liste des jetons reçu en échange de jetons jaune
 	:param partie: La partie en cours
 	:param joueur: Joueur qui pioche les jetons
 	:return: True si action terminé, False si action non aboutie
 	"""
 	gamer = partie.joueurs[joueur]
-
-	def check_jetons(carte):
-		"""
-		On check si le joueur a les jetons pour acheter la carte selectionné
-		:param carte:
-		:return: True si le joueur a assez de jeton, sinon False
-		"""
-		return (gamer.jetons["rouge"] + gamer.bonus["rouge"]) >= carte.rouge and \
-		       (gamer.jetons["vert"] + gamer.bonus["vert"]) >= carte.vert and \
-		       (gamer.jetons["bleu"] + gamer.bonus["bleu"]) >= carte.bleu and \
-		       (gamer.jetons["noir"] + gamer.bonus["noir"]) >= carte.noir and \
-		       (gamer.jetons["blanc"] + gamer.bonus["blanc"]) >= carte.blanc
-
 	pioche: int = int(input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?) (\"0\" pour annuler "
 	                        "l'action)")) - 1
-    if pioche == 0:
-        return False
+	if pioche == 0:
+		return False
 	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?) (\"0\" pour "
 	                        "annuler l'action)")) - 1
-    if numero == 0:
-        return False
+	if numero == 0:
+		return False
 	carteChoisie = partie.pioches[pioche].cartes_visibles[numero]
 
+	if gamer.jetons["jaune"] > 0:
+		jetonsRecues = utiliser_jaune(partie, joueur)
+
+	if check_jetons(partie, joueur, carteChoisie):
+		payer_carte(partie, joueur, carteChoisie)
+		return gamer.achete_carte(partie, pioche, numero)  # utilisé pour dire que l'action est validé
+	print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
+	if jetonsRecues:
+		no_jaune(partie, joueur, jetonsRecues)
+	return False  # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
+
+
+def check_jetons(partie, joueur, carte):
+	"""
+	On check si le joueur a les jetons pour acheter la carte selectionné
+	:param partie: La partie en cours
+	:param joueur: Joueur qui pioche les jetons
+	:param carte: Carte dont il faut vérifier si l'achat est possible
+	:return: True si le joueur a assez de jeton, sinon False
+	"""
+	gamer = partie.joueurs[joueur]
+	return (gamer.jetons["rouge"] + gamer.bonus["rouge"]) >= carte.rouge and \
+	       (gamer.jetons["vert"] + gamer.bonus["vert"]) >= carte.vert and \
+	       (gamer.jetons["bleu"] + gamer.bonus["bleu"]) >= carte.bleu and \
+	       (gamer.jetons["noir"] + gamer.bonus["noir"]) >= carte.noir and \
+	       (gamer.jetons["blanc"] + gamer.bonus["blanc"]) >= carte.blanc
+
+
+def afficher_main(partie, joueur):
+	"""
+	Affiche la main du joueur:
+	- Cartes achetés
+	- Nombre de points gagnés
+	"""
+	partie.joueurs[joueur].voir_main()
+	return False
+
+
+def reserver_carte(partie, joueur, pioche=None, numero=None):
+	gamer = partie.joueurs[joueur]
+	if len(gamer.cartes_cache) == 3:
+		print("Tu as déjà reservé 3 cartes, tu ne peux pas en reserver plus.")
+		return False
+	while pioche not in [-1, 0, 1, 2]:
+		pioche: int = int(input("De quel niveau est la carte que vous souhaitez réserver ? (1, 2 ou 3?) (\"0\" pour "
+		                        "annuler l'action)")) - 1
+	if pioche == -1:
+		return False
+	while numero not in [-1, 0, 1, 2, 3]:
+		numero: int = int(input("Quel est le numéro de la carte que vous souhaitez réserver ? (1, 2, 3 ou 4?) (\"0\" "
+		                        "pour annuler l'action)")) - 1
+	if numero == -1:
+		return False
+	return gamer.reserve_carte(partie, pioche, numero)
+
+
+def jouer_carte_reserve(partie, joueur, jetonsRecuesReserve=None):
+	gamer = partie.joueurs[joueur]
+	if not gamer.cartes_cache:
+		print("Vous n'avez aucune carte en reserve.")
+		return False
+	print("Vous avez reservé les cartes suivantes :")
+	for i, carte in enumerate(gamer.cartes_cache):
+		print(f"carte {i+1} - {carte}")
+	choix = int(input("""Quel carte reservée voulez vous jouer? (Renseigner le numéro indiqué devant la carte que vous 
+voulez jouer. \"0\" pour annuler l'action"""))
+	if choix == 0:
+		return False
+
+	if gamer.jetons["jaune"] > 0:
+		jetonsRecuesReserve = utiliser_jaune(partie, joueur)
+
+	if check_jetons(partie, joueur, gamer.cartes_cache[choix - 1]):
+		payer_carte(partie, joueur, gamer.cartes_cache[choix - 1])
+		return gamer.utilise_carte(choix - 1)  # utilisé pour dire que l'action est validé
+	print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
+
+	if jetonsRecuesReserve:
+		no_jaune(partie, joueur, jetonsRecuesReserve)
+
+	return False  # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
+
+
+def payer_carte(partie, joueur, carte):
+	gamer = partie.joueurs[joueur]
+	gamer.jetons["rouge"] -= carte.rouge
+	gamer.jetons["bleu"] -= carte.bleu
+	gamer.jetons["vert"] -= carte.vert
+	gamer.jetons["noir"] -= carte.noir
+	gamer.jetons["blanc"] -= carte.blanc
+	partie.jetons["rouge"].nb_jetons += carte.rouge
+	partie.jetons["bleu"].nb_jetons += carte.bleu
+	partie.jetons["vert"].nb_jetons += carte.vert
+	partie.jetons["blanc"].nb_jetons += carte.blanc
+	partie.jetons["noir"].nb_jetons += carte.noir
+
+
+def utiliser_jaune(partie, joueur):
+	gamer = partie.joueurs[joueur]
 	jaune_utilise = 0
 	couleurs_recues = []
-
 	while gamer.jetons["jaune"] > 0:
 		utiliseJaune = input("Vous possédez un ou plusieurs jeton jaune. voulez vous en utiliser un? (o/n)")
 		if utiliseJaune not in ["o", "n"]:
@@ -238,43 +324,18 @@ def acheter_carte(partie, joueur, utiliseJaune=None, couleurChoisi=None):
 					break
 		else:
 			break
-
-	if check_jetons(carteChoisie):
-		return gamer.achete_carte(partie, pioche, numero)   # utilisé pour dire que l'action est validé
-	else:
-		print("Vous n'avez pas les jetons nécéssaires pour cette carte.")
-		if utiliseJaune == "o":
-			for kouleur in couleurChoisi:
-				gamer.jetons[kouleur] -= 1
-				gamer.jetons["jaune"] += 1
-				partie.jetons[kouleur].nb_jetons += 1
-				partie.jetons["jaune"].nb_jetons -= 1
-		return False  # utilisé pour indiquer que l'action n'est pas validé et reproposer les acions possible
+	return couleurs_recues
 
 
-def afficher_main(partie, joueur):
-	"""
-	Affiche la main du joueur:
-	- Cartes achetés
-	- Nombre de points gagnés
-	"""
-	partie.joueurs[joueur].voir_main()
-	return False
+def no_jaune(partie, joueur, jetons):
+	gamer = partie.joueurs[joueur]
+	for jeton in jetons:
+		gamer.jetons[jeton] -= 1
+		gamer.jetons["jaune"] += 1
+		partie.jetons[jeton].nb_jetons += 1
+		partie.jetons["jaune"].nb_jetons -= 1
 
 
-def reserver_carte(partie, joueur):
-    gamer = partie.joueurs[joueur]
-	pioche: int = int(input("De quel niveau est la carte que vous souhaitez réserver ? (1, 2 ou 3?) (\"0\" pour annuler "
-	                        "l'action)")) - 1
-    if pioche == 0:
-        return False
-	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez réserver ? (1, 2, 3 ou 4?) (\"0\" pour "
-	                        "annuler l'action)")) - 1
-    if numero == 0:
-        return False
-	return gamer.reserve_carte(partie, pioche, numero)
-    
-    
 # def init_nobles(nj):
 # 	"""
 # 	- Défini les cartes de nobles
