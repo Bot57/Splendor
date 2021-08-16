@@ -5,8 +5,10 @@ def init_nb_joueur():
 	nj = 0
 	while nj not in [2, 3, 4]:
 		nj: int = int(input("Quel est le nombre de joueur ? 2, 3 ou 4 ?"))
-		if nj not in [2, 3, 4]:
-			print("Le nombre de joueur indiqué ne correspond pas.")
+		if not (type(nj) is int):
+			print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+		elif nj not in [2, 3, 4]:
+			print("Le nombre de joueur indiqué n'est pas compris entre 2 et 4.")
 	return nj
 
 
@@ -49,20 +51,20 @@ def afficher_jeu(partie):
 
 	print("------------------------------------------------")
 
-	print("Cartes niveau 3 disponibles :")
-	for i, n in enumerate(partie.pioches[2].cartes_visibles):
+	print("Cartes niveau 1 disponibles :")
+	for i, n in enumerate(partie.pioches[0].cartes_visibles):
 		print(f"Carte 1.{i + 1} --> {n}")
 
 	print("------------------------------------------------")
-
+	
 	print("Cartes niveau 2 disponibles :")
 	for i, n in enumerate(partie.pioches[1].cartes_visibles):
 		print(f"Carte 2.{i + 1} --> {n}")
 
 	print("------------------------------------------------")
 
-	print("Cartes niveau 1 disponibles :")
-	for i, n in enumerate(partie.pioches[0].cartes_visibles):
+		print("Cartes niveau 3 disponibles :")
+	for i, n in enumerate(partie.pioches[2].cartes_visibles):
 		print(f"Carte 3.{i + 1} --> {n}")
 
 	print("------------------------------------------------")
@@ -194,11 +196,15 @@ def acheter_carte(partie, joueur, jetonsRecues=None):
 	gamer = partie.joueurs[joueur]
 	pioche: int = int(input("De quel niveau est la carte que vous souhaitez ? (1, 2 ou 3?) (\"0\" pour annuler "
 	                        "l'action)")) - 1
-	if pioche == 0:
+	if not (type(pioche) is int):
+		print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+	elif pioche == 0:
 		return False
 	numero: int = int(input("Quel est le numéro de la carte que vous souhaitez? (1, 2, 3 ou 4?) (\"0\" pour "
 	                        "annuler l'action)")) - 1
-	if numero == 0:
+	if not (type(numero) is int):
+		print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+	elif numero == 0:
 		return False
 	carteChoisie = partie.pioches[pioche].cartes_visibles[numero]
 
@@ -248,12 +254,16 @@ def reserver_carte(partie, joueur, pioche=None, numero=None):
 	while pioche not in [-1, 0, 1, 2]:
 		pioche: int = int(input("De quel niveau est la carte que vous souhaitez réserver ? (1, 2 ou 3?) (\"0\" pour "
 		                        "annuler l'action)")) - 1
-	if pioche == -1:
+	if not (type(pioche) is int):
+		print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+	elif pioche == -1:
 		return False
 	while numero not in [-1, 0, 1, 2, 3]:
 		numero: int = int(input("Quel est le numéro de la carte que vous souhaitez réserver ? (1, 2, 3 ou 4?) (\"0\" "
 		                        "pour annuler l'action)")) - 1
-	if numero == -1:
+	if not (type(numero) is int):
+		print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+	elif numero == -1:
 		return False
 	return gamer.reserve_carte(partie, pioche, numero)
 
@@ -266,8 +276,13 @@ def jouer_carte_reserve(partie, joueur, jetonsRecuesReserve=None):
 	print("Vous avez reservé les cartes suivantes :")
 	for i, carte in enumerate(gamer.cartes_cache):
 		print(f"carte {i+1} - {carte}")
-	choix = int(input("""Quel carte reservée voulez vous jouer? (Renseigner le numéro indiqué devant la carte que vous 
+	choix = 0
+	while choix not in [*range(len(gamer.cartes_cache))]:
+		choix = int(input("""Quel carte reservée voulez vous jouer? (Renseigner le numéro indiqué devant la carte que vous 
 voulez jouer. \"0\" pour annuler l'action"""))
+		if not (type(pioche) is int):
+			print("Veuillez renseigner votre réponse avec un chiffre et non des lettres.") 
+
 	if choix == 0:
 		return False
 
